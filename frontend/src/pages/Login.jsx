@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogIn, Key, User } from 'lucide-react';
 
@@ -108,8 +108,8 @@ const Login = () => {
         </form>
         
         {/* Helper Note for Dev */}
-        <div className="text-center mt-4" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          <p>Login requires seeded database credentials.</p>
+        <div className="text-center mt-4" style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+          <p>Don't have an account? <Link to="/register" style={{ color: 'var(--accent-primary)', fontWeight: 500 }}>Create an account</Link></p>
         </div>
       </div>
     </div>

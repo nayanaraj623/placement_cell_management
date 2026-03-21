@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 
 // Placeholder Pages
 import Login from './pages/Login';
+import Register from './pages/Register';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import StudentDashboard from './pages/student/StudentDashboard';
 import CompanyDashboard from './pages/company/CompanyDashboard';
@@ -38,6 +39,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/" element={<RootRedirect />} />
           
           <Route path="/admin/*" element={

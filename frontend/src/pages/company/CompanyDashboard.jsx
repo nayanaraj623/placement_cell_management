@@ -1,9 +1,11 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { CompanyApplicants } from './CompanyViews';
 import JobList from '../JobList';
 import { Building, PlusCircle } from 'lucide-react';
 
-const CompanyDashboard = () => {
+const CompanyHome = () => {
   const { user } = useAuth();
   const profile = user.profile || {};
 
@@ -37,6 +39,16 @@ const CompanyDashboard = () => {
         <JobList viewOnly={true} />
       </div>
     </div>
+  );
+};
+
+const CompanyDashboard = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<CompanyHome />} />
+      <Route path="jobs" element={<div><h2 className="page-title mb-4">Manage Jobs</h2><JobList viewOnly={true} /></div>} />
+      <Route path="applicants" element={<CompanyApplicants />} />
+    </Routes>
   );
 };
 

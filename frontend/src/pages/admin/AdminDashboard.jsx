@@ -1,6 +1,8 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { AdminStudents, AdminCompanies, AdminJobs, AdminPlacements } from './AdminViews';
 
-const AdminDashboard = () => {
+const AdminHome = () => {
   return (
     <div>
       <div className="page-header">
@@ -31,6 +33,18 @@ const AdminDashboard = () => {
         <p className="mt-2" style={{color: 'var(--text-muted)'}}>More detailed tables will be built here.</p>
       </div>
     </div>
+  );
+};
+
+const AdminDashboard = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<AdminHome />} />
+      <Route path="students" element={<AdminStudents />} />
+      <Route path="companies" element={<AdminCompanies />} />
+      <Route path="jobs" element={<AdminJobs />} />
+      <Route path="placements" element={<AdminPlacements />} />
+    </Routes>
   );
 };
 

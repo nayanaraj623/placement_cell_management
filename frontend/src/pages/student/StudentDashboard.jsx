@@ -1,9 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
+import { StudentProfile } from './StudentViews';
 import JobList from '../JobList';
 import { Award, BookOpen } from 'lucide-react';
 
-const StudentDashboard = () => {
+// Sub-component for My Applications
+const StudentApplications = () => {
+  const [apps, setApps] = useState([]);
+  const { user } = useAuth();
+  useEffect(() => {
+    api.get(`/placements/student/${user.profile?.id}`).then(res => setApps(res.data)).catch(e => console.error(e));
+  }, []);
+
+  return (
+    <div>
+      <h2 className="page-title mb-4">My Applications</h2>
+      {apps.length === 0 ? <p className="text-muted">You haven't applied to any jobs yet.</p> : (
+        <div className="table-container">
+          <table className="premium-table">
+            <thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Score</th></tr></thead>
+            <tbody>
+              {apps.map(app => (
+                <tr key={app.id}>
+                  <td>{app.company_name}</td>
+                  <td>{app.role}</td>
+                  <td>
+                    <span className={`badge badge-${app.status === 'Applied' ? 'primary' : app.status === 'Selected' ? 'success' : app.status === 'Rejected' ? 'danger' : 'warning'}`}>
+                      {app.status}
+                    </span>
+                  </td>
+                  <td>{app.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const StudentHome = () => {
   const { user } = useAuth();
   const profile = user.profile || {};
 
@@ -49,6 +88,17 @@ const StudentDashboard = () => {
         <JobList />
       </div>
     </div>
+  );
+};
+
+const StudentDashboard = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<StudentHome />} />
+      <Route path="jobs" element={<div><h2 className="page-title mb-4">Available Jobs</h2><JobList /></div>} />
+      <Route path="applications" element={<StudentApplications />} />
+      <Route path="profile" element={<StudentProfile />} />
+    </Routes>
   );
 };
 
