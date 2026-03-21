@@ -1,0 +1,88 @@
+-- Application: Placement Cell Management System
+-- Schema Initialization
+
+CREATE DATABASE IF NOT EXISTS placement_cell_db;
+USE placement_cell_db;
+
+-- 1. ROLES Table
+CREATE TABLE IF NOT EXISTS ROLES (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Intert Initial Roles
+INSERT INTO ROLES (role_name) VALUES ('Admin'), ('Student'), ('Company')
+ON DUPLICATE KEY UPDATE role_name=role_name;
+
+-- 2. USERS Table
+CREATE TABLE IF NOT EXISTS USERS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (role_id) REFERENCES ROLES(id) ON DELETE RESTRICT
+);
+
+-- 3. USER_PHONE Table
+CREATE TABLE IF NOT EXISTS USER_PHONE (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
+);
+
+-- 4. STUDENT Table
+CREATE TABLE IF NOT EXISTS STUDENT (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    dept VARCHAR(100) NOT NULL,
+    cgpa DECIMAL(4,2) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    skills TEXT,
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
+);
+
+-- 5. COMPANY Table
+CREATE TABLE IF NOT EXISTS COMPANY (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    company_name VARCHAR(150) NOT NULL,
+    location VARCHAR(150),
+    industry VARCHAR(100),
+    FOREIGN KEY (user_id) REFERENCES USERS(id) ON DELETE CASCADE
+);
+
+-- 6. JOB Table
+CREATE TABLE IF NOT EXISTS JOB (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    company_id INT NOT NULL,
+    role VARCHAR(100) NOT NULL,
+    description TEXT,
+    salary DECIMAL(10,2),
+    vacancy INT DEFAULT 1,
+    criteria_cgpa DECIMAL(4,2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (company_id) REFERENCES COMPANY(id) ON DELETE CASCADE
+);
+
+-- 7. PLACEMENTS Table
+CREATE TABLE IF NOT EXISTS PLACEMENTS (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    job_id INT NOT NULL,
+    status ENUM('Applied', 'Shortlisted', 'Interviewing', 'Selected', 'Rejected') DEFAULT 'Applied',
+    description TEXT,
+    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES STUDENT(id) ON DELETE CASCADE,
+    FOREIGN KEY (job_id) REFERENCES JOB(id) ON DELETE CASCADE,
+    UNIQUE KEY student_job_unique (student_id, job_id)
+);
+
+-- 8. PERMISSION Table (Optional for Advanced RBAC)
+CREATE TABLE IF NOT EXISTS PERMISSION (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    permission_name VARCHAR(100) NOT NULL UNIQUE
+);
